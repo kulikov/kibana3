@@ -1,5 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash -ex
 
-sed -i 's/window.location.hostname/"'${ELASTICSEARCH_HOST}'"/g' /app/config.js
+function replace_conf {
+  sed -i "s/$(echo $1 | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo ${!1} | sed -e 's/[\/&]/\\&/g')/g" /app/config.js
+}
+
+replace_conf ELASTICSEARCH_ADDRESS
 
 exec "$@"
